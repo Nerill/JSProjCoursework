@@ -1,0 +1,101 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.tabs {
+    background-color: #333;
+    overflow: hidden;
+}
+
+.tab-btn {
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 16px;
+    color: white;
+}
+
+.tab-btn:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.tab-content {
+    
+    padding: 20px;
+    border-top: 1px solid #ccc;
+}
+
+h2 {
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4c87af;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4553a0;
+}
+
+ul.collection {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li.collection-item {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    padding: 10px;
+  }
+  
+  li.collection-item:nth-child(even) {
+    background-color: #e0e0e0;
+  }
+  
+  li.collection-item:before {
+    content: "•";
+    margin-right: 5px;
+  }
+
+  table {
+    display: none;
+    border-collapse: collapse;
+    width: 50%;
+    margin: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
