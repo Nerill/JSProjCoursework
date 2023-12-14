@@ -16,5 +16,7 @@ const holidayBtn = document.querySelector('.holiday-btn');
 const tableBody = document.querySelector('table');
 const resTitle = document.querySelector('.res-title');
 
+const apiKey = 'u1k8kL9rVsbaT3RQOrmkAo6fqqZLpbxT';
+
 export {tabBtn1, tabBtn2, dateFrom1, dateTo1, WMBtn, daysBtn, unitBtn, tabs, 
-    resWM, resDays, resUnit, resultList, selectCountry, selectYear, holidayBtn, tableBody, resTitle};
+    resWM, resDays, resUnit, resultList, selectCountry, selectYear, holidayBtn, tableBody, resTitle, apiKey};

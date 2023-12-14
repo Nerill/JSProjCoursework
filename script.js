@@ -1,7 +1,7 @@
 import {CalendarAPI} from "./CalendarAPI.js";
 
 import {tabBtn1, tabBtn2, dateFrom1, dateTo1, WMBtn, daysBtn, unitBtn, tabs, 
-    resWM, resDays, resUnit, resultList, selectCountry, selectYear, holidayBtn, tableBody, resTitle} from './constants.js';
+    resWM, resDays, resUnit, resultList, selectCountry, selectYear, holidayBtn, tableBody, resTitle, apiKey} from './constants.js';
 
 document.addEventListener('DOMContentLoaded', renderResult);
 
@@ -13,9 +13,6 @@ function openTab(tabId) {
 
     let selectedTab = document.getElementById(tabId);
     selectedTab.style.display = 'block';
-    if(tabId === 'tab2'){
-        getYearList();
-    }
 }
 
 function differenceBetweenDates(unit = "days") //Різниця між двома датами
@@ -39,7 +36,7 @@ function differenceBetweenDates(unit = "days") //Різниця між двом�
 }
 
 function countWM(){
-    let selectWM = document.getElementById('selectWM').value;
+    const selectWM = document.getElementById('selectWM').value;
     let result = 0;
     switch (selectWM) {
         case '7':
@@ -57,8 +54,8 @@ function countWM(){
 }
 
 function countDays() {
-    let currentDate = new Date(dateFrom1.value);
-    let endDate = new Date(dateTo1.value);
+    const currentDate = new Date(dateFrom1.value);
+    const endDate = new Date(dateTo1.value);
     let weekendDays = 0;
     let result = 0;
 
@@ -88,7 +85,7 @@ function countDays() {
 }
 
 function countUnit(){
-    let selectUnit = document.getElementById('selectUnit').value;
+    const selectUnit = document.getElementById('selectUnit').value;
     switch (selectUnit) {
         case 'days':
             resUnit.textContent = `Результат: Між двома датами знаходяться ${differenceBetweenDates(selectUnit)} ${differenceBetweenDates(selectUnit) > 1 ? 'днів': 'день'}.`;
@@ -151,26 +148,26 @@ function renderResult(){
     });
 
     getCountryList();
+    getYearList();
 }
 
 function date2String(){
-    let startDate = new Date(dateFrom1.value);
-    let endDate = new Date(dateTo1.value);
-
-    return `${startDate.getDay()}.${startDate.getMonth()}.${startDate.getFullYear()} - ${endDate.getDay()}.${endDate.getMonth()}.${endDate.getFullYear()}`;
+    const startDate = new Date(dateFrom1.value);
+    const endDate = new Date(dateTo1.value);
+    return `${startDate.getDate()}.${startDate.getMonth()+1}.${startDate.getFullYear()} - ${endDate.getDate()}.${endDate.getMonth()+1}.${endDate.getFullYear()}`;
 }
 
 async function getCountryList() {
     if(localStorage.getItem('country') === null){
         const calendarAPI = new CalendarAPI();
-        let countryList = await calendarAPI.getData('countries');
+        const countryList = await calendarAPI.getData(`https://calendarific.com/api/v2/countries?api_key=${apiKey}`);
 
         countryList.response.countries.forEach((element)=>{
-            let option = document.createElement("option");
+            const option = document.createElement("option");
             option.text = element.country_name;
-            option.value = Object.values(element)[1];
+            option.value = element['iso-3166'];
             selectCountry.appendChild(option);
-            storeCountryInLocalStorage(Object.values(element)[1]+'-'+element.country_name);
+            storeCountryInLocalStorage(element['iso-3166']+'-'+element.country_name);
         })
     }
     else{
@@ -178,8 +175,7 @@ async function getCountryList() {
         ? JSON.parse(localStorage.getItem('country'))
         :[];
         country.forEach((element)=>{
-            let option = document.createElement("option");
-            //console.log(element);
+            const option = document.createElement("option");
             option.text = element.slice(3);
             option.value = element.slice(0, 2);
             selectCountry.appendChild(option);
@@ -190,7 +186,7 @@ async function getCountryList() {
 
 function getYearList(){
     for (let year = 2001; year <= 2049; year++) {
-        let optionElement = document.createElement("option");
+        const optionElement = document.createElement("option");
         optionElement.value = year;
         optionElement.text = year;
     
@@ -206,14 +202,16 @@ async function getHolidaysList() {
     const calendarAPI = new CalendarAPI();
     tableBody.innerHTML = '';
 
-    let tbody = document.createElement('tbody');
+    const tbody = document.createElement('tbody');
 
-    let holidaysList = await calendarAPI.getData('holidays');
-    console.log(holidaysList);
+    const country = document.getElementById('selectCountry').value
+    const year = document.getElementById('selectYear').value
+
+    const holidaysList = await calendarAPI.getData(`https://calendarific.com/api/v2/holidays?api_key=${apiKey}&country=${country}&year=${year}`);
     holidaysList.response.holidays.forEach((element)=>{
-        let row = document.createElement('tr');
-        let td1 = document.createElement('td');
-        let td2 = document.createElement('td');
+        const row = document.createElement('tr');
+        const td1 = document.createElement('td')
+        const td2 = document.createElement('td');
 
         td1.textContent = element.date.datetime.day.toString().padStart(2, '0')
                             +'.'+element.date.datetime.month.toString().padStart(2, '0')

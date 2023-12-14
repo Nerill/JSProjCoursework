@@ -7,9 +7,6 @@ export class CalendarAPI {
     #response;
 
     constructor() {
-        this.#apiUrl = 'https://calendarific.com/api/v2/holidays';
-        this.#apiKey = 'u1k8kL9rVsbaT3RQOrmkAo6fqqZLpbxT';
-        this.#apiUrlCont = "https://calendarific.com/api/v2/countries";
         this.#isFetching = false;
         this.#abortController = null;
         this.#response = {};
@@ -19,12 +16,11 @@ export class CalendarAPI {
         console.log(data);
     }
 
-    getData = async (param) => {
+    getData = async (paramUrl) => {
         this.#isFetching = true;
 
         if (this.#abortController) {
             try {
-                console.log(this.#abortController)
                 this.#abortController.abort();
             } catch (error) {
                 throw new Error(error);
@@ -36,14 +32,7 @@ export class CalendarAPI {
         this.#abortController = abortController;
 
         try {
-            
-            if(param === 'holidays'){
-                let country = document.getElementById('selectCountry').value
-                let year = document.getElementById('selectYear').value
-                this.#response = await fetch(`${this.#apiUrl}?api_key=${this.#apiKey}&country=${country}&year=${year}`, {signal});
-            }else{
-                this.#response = await fetch(`${this.#apiUrlCont}?api_key=${this.#apiKey}`, {signal});
-            }
+            this.#response = await fetch(paramUrl, {signal});
             
             return await this.#response.json();
             
