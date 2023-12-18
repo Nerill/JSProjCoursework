@@ -200,7 +200,12 @@ function getYearList(){
 
 async function getHolidaysList() {
     const calendarAPI = new CalendarAPI();
-    tableBody.innerHTML = '';
+    tableBody.innerHTML = `<thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>`;
 
     const tbody = document.createElement('tbody');
 
@@ -238,6 +243,13 @@ function storeCountryInLocalStorage(newCountry){
     localStorage.setItem('country', JSON.stringify(country));
 }
 
+function checkDates(){
+    if(new Date(dateTo1.value) <= new Date(dateFrom1.value)){
+        window.alert('The "Date From" cannot be greater than the "Date To"!');
+        dateTo1.value = '';
+    }                                  
+}
+
 tabBtn1.addEventListener('click', ()=>{openTab('tab1')});
 tabBtn2.addEventListener('click', ()=>{openTab('tab2')});
 WMBtn.addEventListener('click', ()=>{if(dateFrom1.value && dateTo1.value) {countWM()}});
@@ -247,4 +259,5 @@ unitBtn.addEventListener('click', ()=>{if(dateFrom1.value && dateTo1.value) {cou
 holidayBtn.addEventListener('click', getHolidaysList);
 
 dateFrom1.addEventListener('input', (event)=>{event.target.value ? dateTo1.disabled=false : dateTo1.disabled=true});
+dateTo1.addEventListener('input', checkDates);
 
