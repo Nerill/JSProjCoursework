@@ -126,7 +126,7 @@ function storeResultInLocalStorage(newRes){
     localStorage.setItem('results', JSON.stringify(results));
 }
 
-function createSingleTaskElement(newRes){
+function createSingleCollectElement(newRes){
     const li = document.createElement('li');
     li.className = 'collection-item';
 
@@ -144,7 +144,7 @@ function renderResult(){
     :[];
 
     results.forEach((res) => {
-        createSingleTaskElement(res);
+        createSingleCollectElement(res);
     });
 
     getCountryList();
