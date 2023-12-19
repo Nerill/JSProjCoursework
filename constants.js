@@ -15,8 +15,10 @@ const selectYear = document.getElementById('selectYear');
 const holidayBtn = document.querySelector('.holiday-btn');
 const tableBody = document.querySelector('table');
 const resTitle = document.querySelector('.res-title');
+const countrySelect = document.getElementById('selectCountry');
+const yearSelect = document.getElementById('selectYear');
 
 const apiKey = 'u1k8kL9rVsbaT3RQOrmkAo6fqqZLpbxT';
 
-export {tabBtn1, tabBtn2, dateFrom1, dateTo1, WMBtn, daysBtn, unitBtn, tabs, 
+export {tabBtn1, tabBtn2, dateFrom1, dateTo1, WMBtn, daysBtn, unitBtn, tabs, countrySelect, yearSelect,
     resWM, resDays, resUnit, resultList, selectCountry, selectYear, holidayBtn, tableBody, resTitle, apiKey};

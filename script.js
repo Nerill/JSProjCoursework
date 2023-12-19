@@ -1,6 +1,6 @@
 import {CalendarAPI} from "./CalendarAPI.js";
 
-import {tabBtn1, tabBtn2, dateFrom1, dateTo1, WMBtn, daysBtn, unitBtn, tabs, 
+import {tabBtn1, tabBtn2, dateFrom1, dateTo1, WMBtn, daysBtn, unitBtn, tabs, countrySelect, yearSelect,
     resWM, resDays, resUnit, resultList, selectCountry, selectYear, holidayBtn, tableBody, resTitle, apiKey} from './constants.js';
 
 document.addEventListener('DOMContentLoaded', renderResult);
@@ -199,38 +199,39 @@ function getYearList(){
 }
 
 async function getHolidaysList() {
-    const calendarAPI = new CalendarAPI();
-    tableBody.innerHTML = `<thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Name</th>
-                                </tr>
-                            </thead>`;
+    if(countrySelect.value !== "0"){
+        const calendarAPI = new CalendarAPI();
+        tableBody.innerHTML = `<thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>`;
 
-    const tbody = document.createElement('tbody');
+        const tbody = document.createElement('tbody');
 
-    const country = document.getElementById('selectCountry').value
-    const year = document.getElementById('selectYear').value
+        const country = countrySelect.value
+        const year = yearSelect.value
 
-    const holidaysList = await calendarAPI.getData(`https://calendarific.com/api/v2/holidays?api_key=${apiKey}&country=${country}&year=${year}`);
-    holidaysList.response.holidays.forEach((element)=>{
-        const row = document.createElement('tr');
-        const td1 = document.createElement('td')
-        const td2 = document.createElement('td');
+        const holidaysList = await calendarAPI.getData(`https://calendarific.com/api/v2/holidays?api_key=${apiKey}&country=${country}&year=${year}`);
+        holidaysList.response.holidays.forEach((element)=>{
+            const row = document.createElement('tr');
+            const td1 = document.createElement('td')
+            const td2 = document.createElement('td');
 
-        td1.textContent = element.date.datetime.day.toString().padStart(2, '0')
-                            +'.'+element.date.datetime.month.toString().padStart(2, '0')
-                            +'.'+element.date.datetime.year.toString();
-        td2.textContent = element.name;
+            td1.textContent = element.date.datetime.day.toString().padStart(2, '0')
+                                +'.'+element.date.datetime.month.toString().padStart(2, '0')
+                                +'.'+element.date.datetime.year.toString();
+            td2.textContent = element.name;
 
-        row.appendChild(td1);
-        row.appendChild(td2);
-        tbody.appendChild(row);
-    });
+            row.appendChild(td1);
+            row.appendChild(td2);
+            tbody.appendChild(row);
+        });
 
-    tableBody.appendChild(tbody);
-    tableBody.style.display = 'table';
-
+        tableBody.appendChild(tbody);
+        tableBody.style.display = 'table';
+    }
 }
 
 function storeCountryInLocalStorage(newCountry){
@@ -260,4 +261,7 @@ holidayBtn.addEventListener('click', getHolidaysList);
 
 dateFrom1.addEventListener('input', (event)=>{event.target.value ? dateTo1.disabled=false : dateTo1.disabled=true});
 dateTo1.addEventListener('input', checkDates);
+
+countrySelect.addEventListener('click', ()=>{countrySelect.value !== "0" ? yearSelect.disabled=false : yearSelect.disabled=true})
+
 
