@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Дві вкладки з полями для дат</title>
+</head>
+<body>
+    <div class="tabs">
+        <button class="tab-btn1">Проміжок часу між датами</button>
+        <button class="tab-btn2">Список свят з датами</button>
+    </div>
+
+    <div id="tab1" class="tab-content">
+        <div id="tab1-1">
+            <h2>Проміжок часу між датами</h2>
+            <label for="date1">Дата З:</label>
+            <input type="date" id="date1" class="date1" name="date1">
+
+            <label for="date2">Дата По:</label>
+            <input type="date" id="date2" class="date2" name="date2" disabled>
+        </div>
+
+        <div id="tab1-2">
+            <label>Виберіть тиждень/місяць:</label>
+            <button class="btnWeek">Тиждень (7 днів)</button>
+            <button class="btnMonth">Місяць (30 днів)</button>
+        </div>
+
+        <div id="tab1-3">
+            <label for="selectDays">Виберіть які дні:</label>
+            <select id="selectDays">
+                <option value="allDays">Всі дні</option>
+                <option value="daysOn">Будні дні</option>
+                <option value="daysOff">Вихідні дні</option>
+            </select>
+        </div>
+
+        <div id="tab1-4">
+            <div>
+                <label for="selectUnit">Виберіть одиницю виміру:</label>
+                <select id="selectUnit">
+                    <option value="days">Порахувати кількість днів</option>
+                    <option value="hours">Порахувати кількість годин</option>
+                    <option value="minutes">Порахувати кількість хвилин</option>
+                    <option value="seconds">Порахувати кількість секунд</option>
+                </select>
+            </div>
+            <div>
+                <button class="btnResult">Розрахувати</button>
+            </div>
+        </div>
+        <h3 class="res-title" style="display: none;">Попередні результати</h3>
+        <ul class="collection"></ul>
+
+    </div>
+
+    <div id="tab2" class="tab-content" style="display: none;">
+        <h2>Список свят з датами</h2>
+        <div>
+            <label for="selectCountry">Виберіть країну:</label>
+            <select id="selectCountry">
+                <option value="0"></option>
+            </select>
+            <label for="selectYear">Виберіть рік:</label>
+            <select id="selectYear" disabled></select>
+            <button class="holiday-btn">Розрахувати</button>
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="tblDate">Date<span class="sort-arrow"></span></th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>
