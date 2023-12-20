@@ -37,6 +37,7 @@ export class CalendarAPI {
             return await this.#response.json();
             
         } catch (error) {
+            window.alert(error + "\nНе вдалося завантажити дані!");
             throw new Error(error);
         } finally {
             this.#isFetching = false;

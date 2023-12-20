@@ -23,15 +23,9 @@
         </div>
 
         <div id="tab1-2">
-            <label for="selectWM">Виберіть тиждень/місяць:</label>
-            <select id="selectWM">
-                <option value="7">Тиждень</option>
-                <option value="30">Місяць</option>
-            </select>
-            <button class="WM-btn">Розрахувати</button>
-            <div>
-                <p id="resultWM"></p>
-            </div>
+            <label>Виберіть тиждень/місяць:</label>
+            <button class="btnWeek">Тиждень (7 днів)</button>
+            <button class="btnMonth">Місяць (30 днів)</button>
         </div>
 
         <div id="tab1-3">
@@ -41,10 +35,6 @@
                 <option value="daysOn">Будні дні</option>
                 <option value="daysOff">Вихідні дні</option>
             </select>
-            <button class="Days-btn">Розрахувати</button>
-            <div>
-                <p id="resultDays"></p>
-            </div>
         </div>
 
         <div id="tab1-4">
@@ -56,10 +46,9 @@
                     <option value="minutes">Порахувати кількість хвилин</option>
                     <option value="seconds">Порахувати кількість секунд</option>
                 </select>
-                <button class="Unit-btn">Розрахувати</button>
             </div>
             <div>
-                <p id="resultUnit"></p>
+                <button class="btnResult">Розрахувати</button>
             </div>
         </div>
         <h3 class="res-title" style="display: none;">Попередні результати</h3>
@@ -80,6 +69,14 @@
         </div>
         <div>
             <table>
+                <thead>
+                    <tr>
+                        <th class="tblDate">Date<span class="sort-arrow"></span></th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
         </div>
         

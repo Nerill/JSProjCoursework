@@ -1,7 +1,9 @@
 import {CalendarAPI} from "./CalendarAPI.js";
 
-import {tabBtn1, tabBtn2, dateFrom1, dateTo1, WMBtn, daysBtn, unitBtn, tabs, countrySelect, yearSelect,
-    resWM, resDays, resUnit, resultList, selectCountry, selectYear, holidayBtn, tableBody, resTitle, apiKey} from './constants.js';
+import {tabBtn1, tabBtn2, dateFrom1, dateTo1, unitBtn, tabs, resultList, selectCountry, selectYear, holidayBtn,
+    tableBody, tBody, tblDate, resTitle, countrySelect, yearSelect, btnWeek, btnMonth, apiKey} from './constants.js';
+
+let sortDirection = 1;
 
 document.addEventListener('DOMContentLoaded', renderResult);
 
@@ -15,46 +17,9 @@ function openTab(tabId) {
     selectedTab.style.display = 'block';
 }
 
-function differenceBetweenDates(unit = "days") //Різниця між двома датами
-{
-    const dateFrom = new Date(dateFrom1.value);
-    const dateTo = new Date(dateTo1.value);
-    switch (unit) {
-        case 'days':
-            return (dateTo.getTime() - dateFrom.getTime()) / (1000 * 60 * 60 * 24);
-            break;
-        case 'hours':
-            return (dateTo.getTime() - dateFrom.getTime()) / (1000 * 60 * 60);
-            break;
-        case 'minutes':
-            return (dateTo.getTime() - dateFrom.getTime()) / (1000 * 60);
-            break;
-        case 'seconds':
-            return (dateTo.getTime() - dateFrom.getTime()) / 1000;
-            break;
-    }
-}
-
-function countWM(){
-    const selectWM = document.getElementById('selectWM').value;
-    let result = 0;
-    switch (selectWM) {
-        case '7':
-            result = differenceBetweenDates() / selectWM;
-            resWM.textContent = `Результат: Між двома датами знаходяться ${result.toFixed(1)} ${result > 1 ? 'тижнів' : 'тиждень'}.`;
-            break;
-        case '30':
-            result = differenceBetweenDates() / selectWM;
-            resWM.textContent = `Результат: Між двома датами знаходяться ${result.toFixed(1)} ${result > 1 ? 'місяців' : 'місяць'}.`;
-            break;
-    }
-    storeResultInLocalStorage(date2String() + '  -  ' + resWM.textContent);
-    renderResult();
-    
-}
-
 function countDays() {
     const currentDate = new Date(dateFrom1.value);
+    const startDate = new Date(dateFrom1.value);
     const endDate = new Date(dateTo1.value);
     let weekendDays = 0;
     let result = 0;
@@ -69,38 +34,35 @@ function countDays() {
 
     switch (document.getElementById('selectDays').value) {
         case 'allDays':
-            result = differenceBetweenDates();
-            resDays.textContent = `Результат: Між двома датами знаходяться всього ${result} ${result > 1 ? 'днів' : 'день'}.`;
-            break;
+            return (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+        break;
         case 'daysOn':
-            result = differenceBetweenDates() - weekendDays;
-            resDays.textContent = `Результат: Між двома датами знаходяться ${result} ${result > 1 ? 'робочих днів' : 'робочий день'}.`;
-            break;
+            return ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) - weekendDays;
+        break;
         case 'daysOff':
-            resDays.textContent = `Результат: Між двома датами знаходяться ${weekendDays} ${weekendDays > 1 ? 'вихідних' : 'вихідний'}.`;
-            break;
+            return weekendDays;
+        break;
     }
-    storeResultInLocalStorage(date2String() + '  -  ' + resDays.textContent);
-    renderResult();
 }
 
 function countUnit(){
     const selectUnit = document.getElementById('selectUnit').value;
+    let resUnit = '';
     switch (selectUnit) {
         case 'days':
-            resUnit.textContent = `Результат: Між двома датами знаходяться ${differenceBetweenDates(selectUnit)} ${differenceBetweenDates(selectUnit) > 1 ? 'днів': 'день'}.`;
+            resUnit = `Результат: Між двома датами знаходяться ${countDays()} ${countDays() > 1 ? 'днів': 'день'}.`;
             break;
         case 'hours':
-            resUnit.textContent = `Результат: Між двома датами знаходяться ${differenceBetweenDates(selectUnit)} годин.`;
+            resUnit = `Результат: Між двома датами знаходяться ${countDays()*24} годин.`;
             break;
         case 'minutes':
-            resUnit.textContent = `Результат: Між двома датами знаходяться ${differenceBetweenDates(selectUnit)} хвилин.`;
+            resUnit = `Результат: Між двома датами знаходяться ${countDays()*24*60} хвилин.`;
             break;
         case 'seconds':
-            resUnit.textContent = `Результат: Між двома датами знаходяться ${differenceBetweenDates(selectUnit)} секунд.`;
+            resUnit = `Результат: Між двома датами знаходяться ${countDays()*24*60*60} секунд.`;
             break;
     }
-    storeResultInLocalStorage(date2String() + '  -  ' + resUnit.textContent);
+    storeResultInLocalStorage(date2String() + '  -  ' + resUnit);
     renderResult();
 
 }
@@ -158,7 +120,7 @@ function date2String(){
 }
 
 async function getCountryList() {
-    if(localStorage.getItem('country') === null){
+    if(sessionStorage.getItem('country') === null){
         const calendarAPI = new CalendarAPI();
         const countryList = await calendarAPI.getData(`https://calendarific.com/api/v2/countries?api_key=${apiKey}`);
 
@@ -171,8 +133,8 @@ async function getCountryList() {
         })
     }
     else{
-        const country = localStorage.getItem('country') !== null
-        ? JSON.parse(localStorage.getItem('country'))
+        const country = sessionStorage.getItem('country') !== null
+        ? JSON.parse(sessionStorage.getItem('country'))
         :[];
         country.forEach((element)=>{
             const option = document.createElement("option");
@@ -201,17 +163,13 @@ function getYearList(){
 async function getHolidaysList() {
     if(countrySelect.value !== "0"){
         const calendarAPI = new CalendarAPI();
-        tableBody.innerHTML = `<thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Name</th>
-                                    </tr>
-                                </thead>`;
+        
+        while (tBody.firstChild) {
+            tBody.removeChild(tBody.firstChild);
+          }
 
-        const tbody = document.createElement('tbody');
-
-        const country = countrySelect.value
-        const year = yearSelect.value
+        const country = countrySelect.value;
+        const year = yearSelect.value;
 
         const holidaysList = await calendarAPI.getData(`https://calendarific.com/api/v2/holidays?api_key=${apiKey}&country=${country}&year=${year}`);
         holidaysList.response.holidays.forEach((element)=>{
@@ -226,22 +184,21 @@ async function getHolidaysList() {
 
             row.appendChild(td1);
             row.appendChild(td2);
-            tbody.appendChild(row);
+            tBody.appendChild(row);
         });
 
-        tableBody.appendChild(tbody);
         tableBody.style.display = 'table';
     }
 }
 
 function storeCountryInLocalStorage(newCountry){
-    const country = localStorage.getItem('country') !== null
-    ? JSON.parse(localStorage.getItem('country'))
+    const country = sessionStorage.getItem('country') !== null
+    ? JSON.parse(sessionStorage.getItem('country'))
     :[];
 
     country.push(newCountry);
 
-    localStorage.setItem('country', JSON.stringify(country));
+    sessionStorage.setItem('country', JSON.stringify(country));
 }
 
 function checkDates(){
@@ -251,10 +208,67 @@ function checkDates(){
     }                                  
 }
 
+function setWeekMonthToDate(param = 'week'){
+    const startDate = new Date(dateFrom1.value);
+    switch (param) {
+        case 'week':
+            startDate.setDate(startDate.getDate()+7);
+            break;
+        case 'month':
+            startDate.setMonth(startDate.getMonth()+1);
+            break;
+        
+        default:
+            break;
+    }
+    dateTo1.value = startDate.getFullYear()
+                            +(startDate.getMonth() < 9 ? '-0'+(startDate.getMonth()+1) : '-'+(startDate.getMonth()+1))
+                            +(startDate.getDate() < 10 ? '-0'+startDate.getDate() : '-'+startDate.getDate());
+}
+
+function sortTable() {
+    let rows, switching, i, x, y, shouldSwitch;
+    switching = true;
+
+    while (switching) {
+        switching = false;
+        rows = tableBody.rows;
+
+        for (i = 1; i < rows.length - 1; i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("td")[0].innerText;
+            y = rows[i + 1].getElementsByTagName("td")[0].innerText;
+
+            x = x.substring(6,10)+'-'+x.substring(3,5)+'-'+x.substring(0,2);
+            y = y.substring(6,10)+'-'+y.substring(3,5)+'-'+y.substring(0,2);
+
+            if ((sortDirection < 0 && (new Date(x) > new Date(y))) || (sortDirection > 0 && (new Date(x) < new Date(y)))) {
+            shouldSwitch = true;
+            break;
+            }
+        }
+
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        }
+    }
+    updateSortArrow()
+    sortDirection = -sortDirection;
+}
+
+function updateSortArrow() {
+    let arrow = document.querySelector(".sort-arrow");
+    arrow.innerHTML = "";
+    arrow.classList.remove('asc');
+    arrow.classList.remove('desc');
+    arrow.classList.add(sortDirection === 1 ? "asc" : "desc");
+
+}
+
 tabBtn1.addEventListener('click', ()=>{openTab('tab1')});
 tabBtn2.addEventListener('click', ()=>{openTab('tab2')});
-WMBtn.addEventListener('click', ()=>{if(dateFrom1.value && dateTo1.value) {countWM()}});
-daysBtn.addEventListener('click', ()=>{if(dateFrom1.value && dateTo1.value) {countDays()}});
+
 unitBtn.addEventListener('click', ()=>{if(dateFrom1.value && dateTo1.value) {countUnit()}});
 
 holidayBtn.addEventListener('click', getHolidaysList);
@@ -264,4 +278,6 @@ dateTo1.addEventListener('input', checkDates);
 
 countrySelect.addEventListener('click', ()=>{countrySelect.value !== "0" ? yearSelect.disabled=false : yearSelect.disabled=true})
 
-
+btnWeek.addEventListener('click', ()=>{if(dateFrom1.value){setWeekMonthToDate('week')}});
+btnMonth.addEventListener('click', ()=>{if(dateFrom1.value){setWeekMonthToDate('month')}});
+tblDate.addEventListener('click', sortTable)
