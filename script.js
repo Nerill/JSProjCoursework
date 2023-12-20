@@ -104,6 +104,7 @@ function renderResult(){
     const results = localStorage.getItem('results') !== null
     ? JSON.parse(localStorage.getItem('results'))
     :[];
+    results.reverse();
 
     results.forEach((res) => {
         createSingleCollectElement(res);
